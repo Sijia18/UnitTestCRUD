@@ -6,11 +6,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table
+@Table(name = "`user`")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserEntity {
+public class User {
     @Column
     @Id
     @GeneratedValue

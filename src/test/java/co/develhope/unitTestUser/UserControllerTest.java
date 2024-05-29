@@ -1,6 +1,6 @@
 package co.develhope.unitTestUser;
 
-import co.develhope.unitTestUser.entity.UserEntity;
+import co.develhope.unitTestUser.entity.User;
 import co.develhope.unitTestUser.service.UserService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles(value = "test")
-class UserEntityControllerTest {
+class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -39,46 +39,46 @@ class UserEntityControllerTest {
 
     @Test
     void createUserWithNameTest() throws Exception {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setName("Aurora");
+        User user = new User();
+        user.setName("Aurora");
 
-        String userJSON = objectMapper.writeValueAsString(userEntity);
+        String userJSON = objectMapper.writeValueAsString(user);
         MvcResult result = this.mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(userJSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
-        UserEntity userEntityResponse = objectMapper.readValue(result.getResponse().getContentAsString(), UserEntity.class);
-        assertNotNull(userEntityResponse.getName());
-        assertEquals("Aurora", userEntityResponse.getName());
+        User userResponse = objectMapper.readValue(result.getResponse().getContentAsString(), User.class);
+        assertNotNull(userResponse.getName());
+        assertEquals("Aurora", userResponse.getName());
     }
 
     @Test
     void readUserListTest() throws Exception {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setName("Aurora");
-        userService.create(userEntity);
+        User user = new User();
+        user.setName("Aurora");
+        userService.create(user);
 
         MvcResult result = this.mockMvc.perform(get("/users"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
-        List<UserEntity> userEntityList = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<List<UserEntity>>() {
+        List<User> userList = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<List<User>>() {
         });
 
-        assertNotNull(userEntityList);
-        assertFalse(userEntityList.isEmpty());
+        assertNotNull(userList);
+        assertFalse(userList.isEmpty());
     }
 
     @Test
     void readASingleUserTest() throws Exception {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setName("Aurora");
-        userEntity.setSurname("Scalici");
-        UserEntity savedUserEntity = userService.create(userEntity);
+        User user = new User();
+        user.setName("Aurora");
+        user.setSurname("Scalici");
+        User savedUser = userService.create(user);
 
-        this.mockMvc.perform(get("/users/{id}", savedUserEntity.getId())
+        this.mockMvc.perform(get("/users/{id}", savedUser.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Aurora"))
@@ -87,17 +87,17 @@ class UserEntityControllerTest {
 
     @Test
     void updateUserTest() throws Exception {
-        UserEntity existingUserEntity = new UserEntity();
-        existingUserEntity.setName("Rari");
-        existingUserEntity.setSurname("Scalicci");
-        UserEntity savedUserEntity = userService.create(existingUserEntity);
+        User existingUser = new User();
+        existingUser.setName("Rari");
+        existingUser.setSurname("Scalicci");
+        User savedUser = userService.create(existingUser);
 
-        UserEntity updatedUserEntity = new UserEntity();
-        updatedUserEntity.setName("Aurora");
-        updatedUserEntity.setSurname("Scalici");
+        User updatedUser = new User();
+        updatedUser.setName("Aurora");
+        updatedUser.setSurname("Scalici");
 
-        String updatedUserJson = objectMapper.writeValueAsString(updatedUserEntity);
-        this.mockMvc.perform(put("/users/{id}", savedUserEntity.getId())
+        String updatedUserJson = objectMapper.writeValueAsString(updatedUser);
+        this.mockMvc.perform(put("/users/{id}", savedUser.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updatedUserJson))
                 .andExpect(status().isOk())
@@ -107,16 +107,16 @@ class UserEntityControllerTest {
 
     @Test
     void deleteUserTest() throws Exception {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setName("Aurora");
-        userEntity.setSurname("Scalici");
-        UserEntity savedUserEntity = userService.create(userEntity);
+        User user = new User();
+        user.setName("Aurora");
+        user.setSurname("Scalici");
+        User savedUser = userService.create(user);
 
-        this.mockMvc.perform(delete("/users/{id}", savedUserEntity.getId())
+        this.mockMvc.perform(delete("/users/{id}", savedUser.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
-        Optional<UserEntity> deletedUser = userService.readOne(savedUserEntity.getId());
+        Optional<User> deletedUser = userService.readOne(savedUser.getId());
         assertTrue(deletedUser.isEmpty());
     }
 }

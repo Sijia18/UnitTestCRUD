@@ -1,6 +1,6 @@
 package co.develhope.unitTestUser.service;
 
-import co.develhope.unitTestUser.entity.UserEntity;
+import co.develhope.unitTestUser.entity.User;
 import co.develhope.unitTestUser.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,24 +13,24 @@ public class UserService {
     @Autowired
     private UserRepo userRepo;
 
-    public UserEntity create (UserEntity userEntity){
-        return userRepo.save((userEntity));
+    public User create (User user){
+        return userRepo.save((user));
     }
 
-    public List<UserEntity> read (){
+    public List<User> read (){
         return userRepo.findAll();
     }
 
-    public Optional<UserEntity> readOne (Long id){
+    public Optional<User> readOne (Long id){
         return userRepo.findById(id);
     }
 
-    public UserEntity update(Long id, UserEntity userEntityDetails) {
-        UserEntity userEntity = userRepo.findById(id)
+    public User update(Long id, User userDetails) {
+        User user = userRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User with id" + id + "not found"));
-        userEntity.setName(userEntityDetails.getName());
-        userEntity.setSurname(userEntityDetails.getSurname());
-        return userRepo.save(userEntity);
+        user.setName(userDetails.getName());
+        user.setSurname(userDetails.getSurname());
+        return userRepo.save(user);
     }
 
     public void delete(Long id) {

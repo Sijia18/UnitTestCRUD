@@ -1,6 +1,6 @@
 package co.develhope.unitTestUser;
 
-import co.develhope.unitTestUser.entity.UserEntity;
+import co.develhope.unitTestUser.entity.User;
 import co.develhope.unitTestUser.repository.UserRepo;
 import co.develhope.unitTestUser.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles(value = "test")
-class UserEntityServiceTest {
+class UserServiceTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -38,10 +38,10 @@ class UserEntityServiceTest {
 
     @Test
     void createUserTest() throws Exception {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setName("Aurora");
+        User user = new User();
+        user.setName("Aurora");
 
-        String userJSON = objectMapper.writeValueAsString(userEntity);
+        String userJSON = objectMapper.writeValueAsString(user);
         //json è il parser da json-oggetto e viceversa
         MvcResult result = this.mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -49,58 +49,58 @@ class UserEntityServiceTest {
                         .andDo(print())
                         .andExpect(status().isOk())
                         .andReturn();
-        UserEntity userEntityResponse = objectMapper.readValue(result.getResponse().getContentAsString(), UserEntity.class);
-        assertNotNull(userEntityResponse.getName());
+        User userResponse = objectMapper.readValue(result.getResponse().getContentAsString(), User.class);
+        assertNotNull(userResponse.getName());
     }
 
     @Test
     void readUsersTest() {
-        UserEntity userEntity1 = new UserEntity();
-        userEntity1.setName("Aurora");
-        userEntity1.setSurname("Scalici");
+        User user1 = new User();
+        user1.setName("Aurora");
+        user1.setSurname("Scalici");
 
-        UserEntity userEntity2 = new UserEntity();
-        userEntity2.setName("Alberto");
-        userEntity2.setSurname("Bu");
+        User user2 = new User();
+        user2.setName("Alberto");
+        user2.setSurname("Bu");
 
-        userRepo.save(userEntity1);
-        userRepo.save(userEntity2);
+        userRepo.save(user1);
+        userRepo.save(user2);
 
-        List<UserEntity> userEntities = userService.read();
+        List<User> userEntities = userService.read();
         assertEquals(2, userEntities.size());
     }
 
     @Test
     void updateUserTest() {
-        UserEntity existingUser = new UserEntity();
+        User existingUser = new User();
         existingUser.setName("Rari");
         existingUser.setSurname("Scalicci");
         userRepo.save(existingUser);
         Long userId = existingUser.getId();
 
-        UserEntity updatedUser = new UserEntity();
+        User updatedUser = new User();
         updatedUser.setName("Aurora");
         updatedUser.setSurname("Scalici");
         userService.update(userId, updatedUser);
 
-        Optional<UserEntity> retrievedUpdatedUser = userRepo.findById(userId);
+        Optional<User> retrievedUpdatedUser = userRepo.findById(userId);
         assertTrue(retrievedUpdatedUser.isPresent());
-        UserEntity retrievedUserEntity = retrievedUpdatedUser.get();
-        assertEquals(userId, retrievedUserEntity.getId());
-        assertEquals("Aurora", retrievedUserEntity.getName());
-        assertEquals("Scalici", retrievedUserEntity.getSurname());
+        User retrievedUser = retrievedUpdatedUser.get();
+        assertEquals(userId, retrievedUser.getId());
+        assertEquals("Aurora", retrievedUser.getName());
+        assertEquals("Scalici", retrievedUser.getSurname());
     }
 
     @Test
     void deleteUserTest() {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setName("Aurora");
-        userEntity.setSurname("Scalici");
-        userRepo.save(userEntity);
-        Long userId = userEntity.getId();
+        User user = new User();
+        user.setName("Aurora");
+        user.setSurname("Scalici");
+        userRepo.save(user);
+        Long userId = user.getId();
         userService.delete(userId);
 
-        Optional<UserEntity> deletedUser = userRepo.findById(userId);
+        Optional<User> deletedUser = userRepo.findById(userId);
         assertFalse(deletedUser.isPresent());
     }
 }
